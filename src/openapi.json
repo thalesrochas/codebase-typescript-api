@@ -1,0 +1,405 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Typescript API",
+    "description": "Codebase para APIs usando NodeJS com Typescript",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Contato",
+      "email": "contato@email.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": " API de Testes"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Usuários",
+      "description": "Criação, autenticação e requisição de dados"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "post": {
+        "summary": "Criação de Usuário",
+        "description": "Cria um novo Usuário.",
+        "tags": ["Usuários"],
+        "requestBody": {
+          "required": true,
+          "description": "Informações para efetuar a criação do novo usuário.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegistration"
+              },
+              "examples": {
+                "validUser": {
+                  "summary": "Usuário válido",
+                  "value": {
+                    "name": "John Doe",
+                    "email": "john@mail.com",
+                    "password": "12345#@$%"
+                  }
+                },
+                "invalidUser": {
+                  "summary": "Usuário inválido",
+                  "description": "Este usuário causará um erro 400 por omissão de uma das informações.",
+                  "value": {
+                    "name": "John Doe",
+                    "email": "john@mail.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "O Usuário foi criado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "example": {
+                  "name": "John Doe",
+                  "email": "john@mail.com",
+                  "password": "$2b$10$82CRCYklXeXL7tsy0/ewFuKLX9i06oC3GS7mF9OUE0L9YsvHcKBR2",
+                  "id": "5e8131eba7768d9e4f06c884"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos ou faltantes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": 400,
+                  "error": "Bad Request",
+                  "message": "Invalid parameters"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erro de validação. Conflito com os dados do servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": 409,
+                  "error": "Conflict",
+                  "message": "User validation failed: email: já existe no banco de dados"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/authenticate": {
+      "post": {
+        "summary": "Autenticação de Usuário",
+        "description": "Autentica um Usuário e devolve um token JWT.",
+        "tags": ["Usuários"],
+        "requestBody": {
+          "required": true,
+          "description": "Email e senha válidos do Usuário a ser autenticado.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAuthRequest"
+              },
+              "example": {
+                "email": "john@mail.com",
+                "password": "12345#@$%"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "O usuário foi autenticado e o token devolvido.",
+            "headers": {
+              "x-ratelimit-limit": {
+                "description": "Limite de tentativas de autenticação.",
+                "example": 5,
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "x-ratelimit-remaining": {
+                "description": "Tentativas de autenticação restantes.",
+                "example": 3,
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "x-ratelimit-reset": {
+                "description": "Tempo restante em milissegundos para resetar a permissão de acesso.",
+                "example": 1633964083,
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserAuthResponse"
+                },
+                "example": {
+                  "name": "John Doe",
+                  "email": "john@mail.com",
+                  "password": "$2b$10$82CRCYklXeXL7tsy0/ewFuKLX9i06oC3GS7mF9OUE0L9YsvHcKBR2",
+                  "id": "5e8131eba7768d9e4f06c884",
+                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não foi possível autenticar o usuário.",
+            "headers": {
+              "x-ratelimit-limit": {
+                "description": "Limite de tentativas de autenticação.",
+                "example": 5,
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "x-ratelimit-remaining": {
+                "description": "Tentativas de autenticação restantes.",
+                "example": 3,
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "x-ratelimit-reset": {
+                "description": "Tempo restante em milissegundos para resetar a permissão de acesso.",
+                "example": 1633964083,
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": 401,
+                  "error": "Unauthorized",
+                  "message": "Usuário não encontrado!"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "O usuário excedeu o número de tentativas de autenticação.",
+            "headers": {
+              "x-ratelimit-limit": {
+                "description": "Limite de tentativas de autenticação.",
+                "example": 5,
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "x-ratelimit-remaining": {
+                "description": "Tentativas de autenticação restantes.",
+                "example": 3,
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "x-ratelimit-reset": {
+                "description": "Tempo restante em milissegundos para resetar a permissão de acesso.",
+                "example": 1633964083,
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": 429,
+                  "error": "Too Many Requests",
+                  "message": "Muitas tentativas de autenticação."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "summary": "Dados do Usuário",
+        "description": "Recupera os dados do Usuário referente ao token.",
+        "tags": ["Usuários"],
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dados do Usuário recuperados com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "example": {
+                  "name": "John Doe",
+                  "email": "john@mail.com",
+                  "password": "$2b$10$82CRCYklXeXL7tsy0/ewFuKLX9i06oC3GS7mF9OUE0L9YsvHcKBR2",
+                  "id": "5e8131eba7768d9e4f06c884"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token de autenticação inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": 401,
+                  "error": "Unauthorized",
+                  "message": "invalid signature"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": 404,
+                  "error": "Not Found",
+                  "message": "Usuário não encontrado!"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number"
+          },
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "documentation": {
+            "type": "string"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "description": "Senha criptografada"
+          },
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "UserAuthRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "UserAuthResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "description": "Senha criptografada"
+          },
+          "id": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string",
+            "description": "Token JWT"
+          }
+        }
+      },
+      "UserRegistration": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

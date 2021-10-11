@@ -1,0 +1,19 @@
+# VSCode configuration files
+.vscode
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules/
+
+# TypeScript v1 declaration files
+typings/
+
+# dotenv environment variables file
+.env*
+
+# typescript compiled code
+dist/
