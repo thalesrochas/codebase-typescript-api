@@ -1,8 +1,11 @@
 // "./util/module-alias" deve ser o primeiro import deste arquivo
 import "./util/module-alias";
 
+import { UsersController } from "@controllers/users";
+import { apiErrorValidator } from "@middlewares/api-error-validator";
 import { Server } from "@overnightjs/core";
 import * as database from "@src/database";
+import logger from "@src/logger";
 import cors from "cors";
 import { Application, json } from "express";
 import * as OpenApiValidator from "express-openapi-validator";
@@ -10,9 +13,6 @@ import { OpenAPIV3 } from "express-openapi-validator/dist/framework/types";
 import expressPino from "express-pino-logger";
 import swaggerUi from "swagger-ui-express";
 
-import { UsersController } from "./controllers/users";
-import logger from "./logger";
-import { apiErrorValidator } from "./middlewares/api-error-validator";
 import apiSchema from "./openapi.json";
 
 export class SetupServer extends Server {

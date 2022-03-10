@@ -1,6 +1,7 @@
 import AuthService from "@services/auth";
 import logger from "@src/logger";
 import mongoose, { Document, Model } from "mongoose";
+import uniqueValidator from "mongoose-unique-validator";
 
 export interface User {
   _id?: string;
@@ -34,14 +35,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-schema.path("email").validate(
-  async (email: string) => {
-    const emailCount = await mongoose.models.User.countDocuments({ email });
-    return !emailCount;
-  },
-  "já existe no banco de dados",
-  CUSTOM_VALIDATION.DUPLICATED
-);
+schema.plugin(uniqueValidator, {
+  message: "já existe no banco de dados",
+  type: "DUPLICATED",
+});
 
 schema.pre<UserModel>("save", async function (): Promise<void> {
   if (!this.password || !this.isModified("password")) {

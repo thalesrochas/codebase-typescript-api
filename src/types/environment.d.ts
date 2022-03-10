@@ -1,4 +1,4 @@
-import { Level } from "pino";
+import P from "pino";
 
 declare global {
   namespace NodeJS {
@@ -6,7 +6,8 @@ declare global {
       MONGODB_URI: string;
       NODE_ENV: "test" | "development" | "production";
       PINO_LOGGER_ENABLED: string;
-      PINO_LOGGER_LEVEL: Level;
+      PINO_LOGGER_LEVEL: P.Level;
+      PINO_LOGGER_LEVEL_DB: P.Level;
       PORT?: string;
       JWT_SECRET: string;
       JWT_EXPIRES: string;
