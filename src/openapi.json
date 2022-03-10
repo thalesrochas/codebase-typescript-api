@@ -338,7 +338,7 @@
       "User": {
         "type": "object",
         "properties": {
-          "name": {
+          "nome": {
             "type": "string"
           },
           "email": {
@@ -367,7 +367,7 @@
       "UserAuthResponse": {
         "type": "object",
         "properties": {
-          "name": {
+          "nome": {
             "type": "string"
           },
           "email": {
@@ -389,7 +389,7 @@
       "UserRegistration": {
         "type": "object",
         "properties": {
-          "name": {
+          "nome": {
             "type": "string"
           },
           "email": {
