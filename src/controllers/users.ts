@@ -1,12 +1,11 @@
-import { authMiddleware } from "@middlewares/auth";
-import { User } from "@models/user";
+import { BaseController } from "@controllers";
+import { auth } from "@middlewares/auth";
+import { User } from "@models";
 import { Controller, Get, Middleware, Post } from "@overnightjs/core";
 import AuthService from "@services/auth";
 import ApiError from "@util/errors/api-error";
 import { Request, Response } from "express";
 import rateLimit from "express-rate-limit";
-
-import { BaseController } from "./index";
 
 const rateLimiter = rateLimit({
   handler(_req, res: Response): void {
@@ -40,7 +39,15 @@ export class UsersController extends BaseController {
   @Post("authenticate")
   @Middleware(rateLimiter)
   public async authenticate(req: Request, res: Response): Promise<Response> {
-    const { email, password } = req.body;
+    const { email, senha } = req.body;
+
+    if (!email || !senha) {
+      return this.sendErrorResponse(res, {
+        code: 401,
+        message: "Email e/ou Senha não informado(s).",
+      });
+    }
+
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -50,7 +57,7 @@ export class UsersController extends BaseController {
       });
     }
 
-    if (!(await AuthService.comparePasswords(password, user.password))) {
+    if (!(await AuthService.comparePasswords(senha, user.senha))) {
       return this.sendErrorResponse(res, {
         code: 401,
         message: "Senha não corresponde!",
@@ -59,13 +66,13 @@ export class UsersController extends BaseController {
 
     const token = AuthService.generateToken(user.toJSON());
 
-    return res.status(200).send({ ...user.toJSON(), token });
+    return res.status(200).send({ token });
   }
 
   @Get("me")
-  @Middleware(authMiddleware)
+  @Middleware(auth)
   public async me(req: Request, res: Response): Promise<Response> {
-    const email = req.decoded?.email;
+    const email = req.user?.email;
     const user = await User.findOne({ email });
 
     if (!user) {

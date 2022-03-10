@@ -1,4 +1,4 @@
-import { User } from "@models/user";
+import { User } from "@models";
 import AuthService from "@services/auth";
 
 describe("Testes funcionais de Usuário", () => {
@@ -8,24 +8,24 @@ describe("Testes funcionais de Usuário", () => {
     it("deve criar com sucesso um novo usuário com senha criptografada", async () => {
       const newUser = {
         email: "john@mail.com",
-        name: "John Doe",
-        password: "1234",
+        nome: "John Doe",
+        senha: "12345678",
       };
 
       const response = await global.testRequest.post("/users").send(newUser);
       expect(response.status).toBe(201);
       await expect(
-        AuthService.comparePasswords(newUser.password, response.body.password)
+        AuthService.comparePasswords(newUser.senha, response.body.senha)
       ).resolves.toBeTruthy();
       expect(response.body).toEqual(
-        expect.objectContaining({ ...newUser, password: expect.any(String) })
+        expect.objectContaining({ ...newUser, senha: expect.any(String) })
       );
     });
 
     it("deve retornar 400 quando houver um erro de validação", async () => {
       const newUser = {
         email: "john@mail.com",
-        password: "1234",
+        senha: "12345678",
       };
 
       const response = await global.testRequest.post("/users").send(newUser);
@@ -34,15 +34,15 @@ describe("Testes funcionais de Usuário", () => {
       expect(response.body).toEqual({
         code: 400,
         error: "Bad Request",
-        message: "User validation failed: name: Path `name` is required.",
+        message: "User validation failed: nome: Path `nome` is required.",
       });
     });
 
     it("deve retornar 409 quando o email já existe", async () => {
       const newUser = {
         email: "john@mail.com",
-        name: "John Doe",
-        password: "1234",
+        nome: "John Doe",
+        senha: "12345678",
       };
 
       await global.testRequest.post("/users").send(newUser);
@@ -61,15 +61,15 @@ describe("Testes funcionais de Usuário", () => {
     it("deve gerar um token para um usuário válido", async () => {
       const newUser = {
         email: "john@mail.com",
-        name: "John Doe",
-        password: "1234",
+        nome: "John Doe",
+        senha: "12345678",
       };
 
       await new User(newUser).save();
 
       const response = await global.testRequest
         .post("/users/authenticate")
-        .send({ email: newUser.email, password: newUser.password });
+        .send({ email: newUser.email, senha: newUser.senha });
 
       expect(response.body).toEqual(
         expect.objectContaining({ token: expect.any(String) })
@@ -79,7 +79,7 @@ describe("Testes funcionais de Usuário", () => {
     it("deve retornar UNAUTHORIZED se o usuário com o e-mail fornecido não for encontrado", async () => {
       const response = await global.testRequest
         .post("/users/authenticate")
-        .send({ email: "some-email@mail.com", password: "1234" });
+        .send({ email: "some-email@mail.com", senha: "12345678" });
 
       expect(response.status).toBe(401);
     });
@@ -87,15 +87,15 @@ describe("Testes funcionais de Usuário", () => {
     it("deve retornar UNAUTHORIZED se o usuário for encontrado, mas a senha não corresponder", async () => {
       const newUser = {
         email: "john@mail.com",
-        name: "John Doe",
-        password: "1234",
+        nome: "John Doe",
+        senha: "12345678",
       };
 
       await new User(newUser).save();
 
       const response = await global.testRequest
         .post("/users/authenticate")
-        .send({ email: newUser.email, password: "different password" });
+        .send({ email: newUser.email, senha: "different password" });
 
       expect(response.status).toBe(401);
     });
@@ -105,8 +105,8 @@ describe("Testes funcionais de Usuário", () => {
     it("deve retornar as informações do proprietário do token", async () => {
       const newUser = {
         email: "john@mail.com",
-        name: "John Doe",
-        password: "1234",
+        nome: "John Doe",
+        senha: "12345678",
       };
 
       const user = await new User(newUser).save();
@@ -122,8 +122,8 @@ describe("Testes funcionais de Usuário", () => {
     it("deve retornar Not Found, quando o usuário não for encontrado", async () => {
       const newUser = {
         email: "john@mail.com",
-        name: "John Doe",
-        password: "1234",
+        nome: "John Doe",
+        senha: "12345678",
       };
 
       // Create a new user but don't save it

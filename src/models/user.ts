@@ -1,30 +1,27 @@
 import AuthService from "@services/auth";
 import logger from "@src/logger";
-import mongoose, { Document, Model } from "mongoose";
+import { Document, Model, model, Query, Schema } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
 export interface User {
-  _id?: string;
-  name: string;
+  nome: string;
   email: string;
-  password: string;
+  senha: string;
 }
 
-export enum CUSTOM_VALIDATION {
-  DUPLICATED = "DUPLICATED",
-}
-
-const schema = new mongoose.Schema(
+const schema = new Schema<User>(
   {
     email: {
       required: true,
       type: String,
       unique: true,
     },
-    name: { required: true, type: String },
-    password: { required: true, type: String },
+    nome: { required: true, type: String },
+    senha: { required: true, type: String },
   },
   {
+    strict: "throw",
+    timestamps: true,
     toJSON: {
       transform: (_doc, ret): void => {
         ret.id = ret._id.toString();
@@ -40,19 +37,36 @@ schema.plugin(uniqueValidator, {
   type: "DUPLICATED",
 });
 
-schema.pre<UserModel>("save", async function (): Promise<void> {
-  if (!this.password || !this.isModified("password")) {
-    return;
-  }
+schema.path("senha").validate(
+  async function (senha: string) {
+    return senha.length >= 8;
+  },
+  "deve ter pelo menos 8 caracteres",
+  "TOO SHORT"
+);
 
-  try {
-    const hashedPassword = await AuthService.hashPassword(this.password);
-    this.password = hashedPassword;
-  } catch (err) {
-    logger.error(`Error de hash na senha do Usuário ${this.name}`);
+schema.pre<User & Document>("save", async function (): Promise<void> {
+  if (this.senha && this.isModified("senha")) {
+    try {
+      const hashedPassword = await AuthService.hashPassword(this.senha);
+      this.senha = hashedPassword;
+    } catch (error) {
+      logger.error(`Error de hash na senha do Usuário ${this.nome}`);
+    }
   }
 });
 
-interface UserModel extends Omit<User, "_id">, Document {}
+schema.pre<Query<User, User>>("updateOne", async function (): Promise<void> {
+  const senha = this.get("senha");
 
-export const User: Model<UserModel> = mongoose.model("User", schema);
+  if (senha) {
+    try {
+      const hashedPassword = await AuthService.hashPassword(senha);
+      this.set("senha", hashedPassword);
+    } catch (error) {
+      logger.error("Error de hash na senha do Usuário");
+    }
+  }
+});
+
+export const User: Model<User> = model("User", schema);

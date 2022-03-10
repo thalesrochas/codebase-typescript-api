@@ -17,3 +17,6 @@ typings/
 
 # typescript compiled code
 dist/
+
+# jest coverage report
+coverage/

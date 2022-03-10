@@ -1,7 +1,7 @@
 // "./util/module-alias" deve ser o primeiro import deste arquivo
 import "./util/module-alias";
 
-import { UsersController } from "@controllers/users";
+import * as Controllers from "@controllers";
 import { apiErrorValidator } from "@middlewares/api-error-validator";
 import { Server } from "@overnightjs/core";
 import * as database from "@src/database";
@@ -50,7 +50,7 @@ export class SetupServer extends Server {
   }
 
   private setupController(): void {
-    const usersController = new UsersController();
+    const usersController = new Controllers.UsersController();
 
     this.addControllers([usersController]);
   }

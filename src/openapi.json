@@ -39,16 +39,16 @@
                 "validUser": {
                   "summary": "Usuário válido",
                   "value": {
-                    "name": "John Doe",
+                    "nome": "John Doe",
                     "email": "john@mail.com",
-                    "password": "12345#@$%"
+                    "senha": "12345#@$%"
                   }
                 },
                 "invalidUser": {
                   "summary": "Usuário inválido",
                   "description": "Este usuário causará um erro 400 por omissão de uma das informações.",
                   "value": {
-                    "name": "John Doe",
+                    "nome": "John Doe",
                     "email": "john@mail.com"
                   }
                 }
@@ -65,9 +65,9 @@
                   "$ref": "#/components/schemas/User"
                 },
                 "example": {
-                  "name": "John Doe",
+                  "nome": "John Doe",
                   "email": "john@mail.com",
-                  "password": "$2b$10$82CRCYklXeXL7tsy0/ewFuKLX9i06oC3GS7mF9OUE0L9YsvHcKBR2",
+                  "senha": "$2b$10$82CRCYklXeXL7tsy0/ewFuKLX9i06oC3GS7mF9OUE0L9YsvHcKBR2",
                   "id": "5e8131eba7768d9e4f06c884"
                 }
               }
@@ -121,7 +121,7 @@
               },
               "example": {
                 "email": "john@mail.com",
-                "password": "12345#@$%"
+                "senha": "12345#@$%"
               }
             }
           }
@@ -158,9 +158,9 @@
                   "$ref": "#/components/schemas/UserAuthResponse"
                 },
                 "example": {
-                  "name": "John Doe",
+                  "nome": "John Doe",
                   "email": "john@mail.com",
-                  "password": "$2b$10$82CRCYklXeXL7tsy0/ewFuKLX9i06oC3GS7mF9OUE0L9YsvHcKBR2",
+                  "senha": "$2b$10$82CRCYklXeXL7tsy0/ewFuKLX9i06oC3GS7mF9OUE0L9YsvHcKBR2",
                   "id": "5e8131eba7768d9e4f06c884",
                   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
                 }
@@ -271,9 +271,9 @@
                   "$ref": "#/components/schemas/User"
                 },
                 "example": {
-                  "name": "John Doe",
+                  "nome": "John Doe",
                   "email": "john@mail.com",
-                  "password": "$2b$10$82CRCYklXeXL7tsy0/ewFuKLX9i06oC3GS7mF9OUE0L9YsvHcKBR2",
+                  "senha": "$2b$10$82CRCYklXeXL7tsy0/ewFuKLX9i06oC3GS7mF9OUE0L9YsvHcKBR2",
                   "id": "5e8131eba7768d9e4f06c884"
                 }
               }
@@ -344,7 +344,7 @@
           "email": {
             "type": "string"
           },
-          "password": {
+          "senha": {
             "type": "string",
             "description": "Senha criptografada"
           },
@@ -359,7 +359,7 @@
           "email": {
             "type": "string"
           },
-          "password": {
+          "senha": {
             "type": "string"
           }
         }
@@ -373,7 +373,7 @@
           "email": {
             "type": "string"
           },
-          "password": {
+          "senha": {
             "type": "string",
             "description": "Senha criptografada"
           },
@@ -395,7 +395,7 @@
           "email": {
             "type": "string"
           },
-          "password": {
+          "senha": {
             "type": "string"
           }
         }

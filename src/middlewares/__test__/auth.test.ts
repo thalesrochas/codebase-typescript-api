@@ -1,6 +1,6 @@
 import AuthService from "@services/auth";
 
-import { authMiddleware } from "../auth";
+import { auth } from "../auth";
 
 describe("Auth Middleware", () => {
   it("deve verificar um token JWT e chamar a próxima middleware", async () => {
@@ -10,7 +10,7 @@ describe("Auth Middleware", () => {
     const resFake = {};
     const nextFake = jest.fn();
 
-    authMiddleware(reqFake, resFake, nextFake);
+    await auth(reqFake, resFake, nextFake);
     expect(nextFake).toHaveBeenCalled();
   });
 
@@ -20,7 +20,7 @@ describe("Auth Middleware", () => {
     const resFake = { status: jest.fn(() => ({ send: sendMock })) };
     const nextFake = jest.fn();
 
-    authMiddleware(reqFake, resFake as Record<string, unknown>, nextFake);
+    await auth(reqFake, resFake as Record<string, unknown>, nextFake);
     expect(resFake.status).toHaveBeenCalledWith(401);
     expect(sendMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -36,7 +36,7 @@ describe("Auth Middleware", () => {
     const resFake = { status: jest.fn(() => ({ send: sendMock })) };
     const nextFake = jest.fn();
 
-    authMiddleware(reqFake, resFake as Record<string, unknown>, nextFake);
+    await auth(reqFake, resFake as Record<string, unknown>, nextFake);
     expect(resFake.status).toHaveBeenCalledWith(401);
     expect(sendMock).toHaveBeenCalledWith(
       expect.objectContaining({
